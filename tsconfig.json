@@ -16,13 +16,13 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
-  },
-  "paths": {
-    "@/*": ["./src/*"],
-    "@modules/*": ["./src/modules/*"],
-    "@service/*": ["./src/service/*"],
-    "@constants/*": ["./src/constants/*"],
-
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@service/*": ["./src/service/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@share/*": ["./src/share/*"]
+    }
   }
 }
