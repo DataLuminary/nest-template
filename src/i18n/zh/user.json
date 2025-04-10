@@ -1,0 +1,23 @@
+{
+  "validate": {
+    "name": {
+      "required": "用户名必填",
+      "maxLength": "用户名最长不超过25个字符"
+    },
+    "email": {
+      "invalid": "错误邮箱格式不正确",
+      "required": "邮箱必填"
+    },
+    "mobile": {
+      "invalid": "手机号格式不正确",
+      "required": "手机号必填"
+    },
+    "password": {
+      "required": "密码必填",
+      "minLength": "密码最低8为"
+    },
+    "status": {
+      "enum": "用户状态不正确"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "validate": {
+    "name": {
+      "required": "Name is required",
+      "maxLength": "Name is required"
+    },
+    "email": {
+      "invalid": "Invalid email format",
+      "required": "Email is required"
+    },
+    "mobile": {
+      "invalid": "Invalid mobile number",
+      "required": "Mobile number is required when provided"
+    },
+    "password": {
+      "required": "Password is required",
+      "minLength": "Password must be at least 8 characters long"
+    },
+    "status": {
+      "enum": "Invalid user status"
+    }
+  }
+}

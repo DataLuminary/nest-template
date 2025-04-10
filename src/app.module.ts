@@ -3,6 +3,12 @@ import { ConfigModule } from "@nestjs/config";
 import { UsersModule } from "@modules/users/users.module";
 import { SpaceModule } from "@modules/space/space.module";
 import { DatabaseModule } from "@share/database/database.module";
+import {
+  AcceptLanguageResolver,
+  CookieResolver,
+  I18nModule,
+  QueryResolver,
+} from "nestjs-i18n";
 
 @Module({
   imports: [
@@ -12,6 +18,18 @@ import { DatabaseModule } from "@share/database/database.module";
       ignoreEnvFile: false,
       // 是否是全局模块
       isGlobal: true,
+    }),
+    I18nModule.forRoot({
+      fallbackLanguage: "en",
+      loaderOptions: {
+        path: "src/i18n/",
+        watch: true,
+      },
+      resolvers: [
+        { use: QueryResolver, options: ["lang"] },
+        new CookieResolver(["lang"]),
+        AcceptLanguageResolver,
+      ],
     }),
     DatabaseModule,
     UsersModule,
