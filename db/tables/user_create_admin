@@ -1,0 +1,30 @@
+-- Step 1: Generate UUID for uid and salt
+SET @uid = UUID(); -- Generates a v7-like UUID (replace with actual v7 if needed)
+SET @salt = UUID(); -- Generates a v4 UUID
+
+-- Step 2: Define the raw password
+SET @password = 'andy';
+
+-- Step 3: Compute the MD5 hash of salt + password
+SET @hashed_password = MD5(CONCAT(@salt, @password));
+
+-- Step 4: Insert the admin user into the table
+INSERT INTO `user` (
+    `uid`,
+    `name`,
+    `password`,
+    `slat`,
+    `nickname`,
+    `status`,
+    `creator`,
+    `updater`
+) VALUES (
+    @uid,
+    'admin',
+    @hashed_password,
+    @salt,
+    'Admin User',
+    'active',
+    'system',
+    'system'
+);

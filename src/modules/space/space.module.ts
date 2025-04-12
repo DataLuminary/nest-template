@@ -1,12 +1,12 @@
 import { Module } from "@nestjs/common";
-import { spaceProviders } from "@modules/space/space.providers";
-import { SpaceService } from "@modules/space/space.service";
-import { DatabaseModule } from "@share/database/database.module";
-import { SpaceController } from "@modules/space/space.controller";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { SpaceController } from "./space.controller";
+import { SpaceService } from "./space.service";
+import { Space } from "./entities/space.entity";
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [TypeOrmModule.forFeature([Space])],
   controllers: [SpaceController],
-  providers: [...spaceProviders, SpaceService],
+  providers: [SpaceService],
 })
 export class SpaceModule {}

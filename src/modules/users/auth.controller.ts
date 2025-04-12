@@ -10,7 +10,7 @@ import {
 import { UsersService } from "./users.service";
 
 @Controller("users")
-export class UsersController {
+export class AuthController {
   constructor(private readonly service: UsersService) {}
 
   @Post()
@@ -25,7 +25,7 @@ export class UsersController {
 
   @Get(":uid")
   findOne(@Param("uid") uid: string) {
-    return this.service.findOne(uid);
+    return this.service.findOne({ uid });
   }
 
   @Patch(":uid")

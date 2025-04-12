@@ -6,7 +6,7 @@ export function setupSwagger(app: INestApplication) {
     .setTitle("DataTalk API")
     .setDescription("Open API description")
     .setVersion("1.0.0")
-    .addTag("cats")
+    .addTag("api")
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("/swagger/api", app, documentFactory);

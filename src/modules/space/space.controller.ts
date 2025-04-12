@@ -6,35 +6,42 @@ import {
   Patch,
   Param,
   Delete,
+  UsePipes,
+  ValidationPipe,
 } from "@nestjs/common";
 import { SpaceService } from "./space.service";
+import { SpaceCreateDto } from "src/modules/space/dto/space.create.dto";
+import { SpaceUpdateDto } from "src/modules/space/dto/space.update.dto";
 
-@Controller("space")
+@Controller("spaces")
 export class SpaceController {
-  constructor(private readonly service: SpaceService) {}
+  constructor(private readonly spaceService: SpaceService) {}
 
   @Post()
-  create(@Body() createUserDto) {
-    console.log(createUserDto);
+  @UsePipes(new ValidationPipe({ transform: true }))
+  create(@Body() createSpaceDto: SpaceCreateDto) {
+    console.log(createSpaceDto);
+    return this.spaceService.create(createSpaceDto);
   }
 
   @Get()
   findAll() {
-    return this.service.findAll();
+    return this.spaceService.findAll();
   }
 
-  @Get(":uid")
-  findOne(@Param("uid") uid: string) {
-    return this.service.findOne(uid);
+  @Get(":id")
+  findOne(@Param("id") id: string) {
+    return this.spaceService.findOne(+id);
   }
 
-  @Patch(":uid")
-  update(@Param("uid") uid: string, @Body() updateUserDto) {
-    console.log(+uid, updateUserDto);
+  @Patch(":id")
+  @UsePipes(new ValidationPipe({ transform: true }))
+  update(@Param("id") id: string, @Body() updateSpaceDto: SpaceUpdateDto) {
+    return this.spaceService.update(+id, updateSpaceDto);
   }
 
-  @Delete(":uid")
-  remove(@Param("uid") uid: string) {
-    return this.service.remove(uid);
+  @Delete(":id")
+  remove(@Param("id") id: string) {
+    return this.spaceService.delete(+id);
   }
 }

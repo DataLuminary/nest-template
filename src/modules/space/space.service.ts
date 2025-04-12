@@ -1,28 +1,54 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { SpaceItem } from "./space.entity";
-import { SPACE_REPOSITORY } from "@modules/space/space.providers";
+import { Space } from "./entities/space.entity";
+import { SpaceCreateDto } from "src/modules/space/dto/space.create.dto";
+import { SpaceUpdateDto } from "src/modules/space/dto/space.update.dto";
 
 @Injectable()
 export class SpaceService {
   constructor(
-    @Inject(SPACE_REPOSITORY)
-    private repository: Repository<SpaceItem>,
+    @InjectRepository(Space)
+    private repository: Repository<Space>,
   ) {}
 
-  async findAll(): Promise<SpaceItem[]> {
+  async findAll(): Promise<Space[]> {
     return this.repository.find();
   }
 
-  findOne(uid: string) {
-    return `This action returns a #${uid} user`;
+  async findOne(key: number | string, field = "uid"): Promise<Space> {
+    const data = await this.repository.findOne({ where: { [field]: key } });
+    if (!data) {
+      throw new NotFoundException("Space not found");
+    }
+    return data;
   }
 
-  update(uid: string) {
-    return `This action updates a #${uid} user`;
+  async create(createSpaceDto: SpaceCreateDto): Promise<Space> {
+    const space = this.repository.create({
+      ...createSpaceDto,
+      uid: this.generateUid(),
+    });
+    return this.repository.save(space);
   }
 
-  remove(uid: string) {
-    return `This action removes a #${uid} user`;
+  async update(id: number, updateSpaceDto: SpaceUpdateDto): Promise<Space> {
+    await this.repository.update(id, updateSpaceDto);
+    const updatedSpace = await this.repository.findOne({ where: { id } });
+    if (!updatedSpace) {
+      throw new NotFoundException("Space not found");
+    }
+    return updatedSpace;
+  }
+
+  async delete(id: number): Promise<void> {
+    const result = await this.repository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException("Space not found");
+    }
+  }
+
+  private generateUid(): string {
+    return Math.random().toString(36).substr(2, 9);
   }
 }

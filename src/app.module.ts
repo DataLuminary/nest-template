@@ -1,14 +1,17 @@
-import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
-import { UsersModule } from "@modules/users/users.module";
+import { getDatabaseConfig } from "@/config/database.config";
 import { SpaceModule } from "@modules/space/space.module";
-import { DatabaseModule } from "@share/database/database.module";
+import { AuthModule } from "@modules/users/auth.module";
+import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import * as Joi from "joi";
+
 import {
   AcceptLanguageResolver,
   CookieResolver,
   I18nModule,
   QueryResolver,
 } from "nestjs-i18n";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
   imports: [
@@ -18,6 +21,26 @@ import {
       ignoreEnvFile: false,
       // 是否是全局模块
       isGlobal: true,
+      validationSchema: Joi.object({
+        // logger
+        LOGGER_LEVEL: Joi.string().required(),
+        // JWT
+        JWT_EXPIRE: Joi.number()
+          .required()
+          .min(60 * 10), // 至少10 分钟
+        REFRESH_TOKEN_SECRET: Joi.string().required().min(6),
+        REFRESH_TOKEN_EXPIRE: Joi.number().required().min(86400), // 至少1天,
+        //DB
+        DB_HOST: Joi.string().required(),
+        DB_PORT: Joi.number().required().default(3306).min(1024).max(65535),
+        DB_DATABASE: Joi.string().required(),
+        DB_USERNAME: Joi.string().required(),
+        DB_PASSWORD: Joi.string().required(),
+        DB_SYNCHRONIZE: Joi.boolean().required(),
+        DB_LOGGING: Joi.string()
+          .custom((value: string) => value.split(",")) // 将字符串转换为数组
+          .default("query,error"),
+      }),
     }),
     I18nModule.forRoot({
       fallbackLanguage: "en",
@@ -31,8 +54,23 @@ import {
         AcceptLanguageResolver,
       ],
     }),
-    DatabaseModule,
-    UsersModule,
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const databaseConfig = getDatabaseConfig(configService);
+        return {
+          ...databaseConfig,
+          synchronize: true,
+          autoLoadEntities: true,
+        };
+      },
+      /*dataSourceFactory: async (options) => {
+        const dataSource = await new DataSource(options!).initialize();
+        return dataSource;
+      },*/
+    }),
+    AuthModule,
+    AuthModule,
     SpaceModule,
   ],
   providers: [],
