@@ -1,3 +1,4 @@
+import { JwtAuthGuard } from "@modules/auth/guards/jwt-auth-guard.service";
 import { NestFactory } from "@nestjs/core";
 import {
   FastifyAdapter,
@@ -7,6 +8,7 @@ import { AppModule } from "@/app.module";
 import { setupSwagger } from "@/setupSwagger";
 import { I18nValidationExceptionFilter, I18nValidationPipe } from "nestjs-i18n";
 import { ValidationPipe } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -17,6 +19,8 @@ async function bootstrap() {
       ignoreTrailingSlash: true,
     }),
   );
+  const configService = app.get(ConfigService);
+
   app.useGlobalPipes(new I18nValidationPipe());
   app.useGlobalFilters(
     new I18nValidationExceptionFilter({
@@ -24,10 +28,10 @@ async function bootstrap() {
     }),
   );
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix(configService.get<string>("GLOBAL_PREFIX") || "api");
   setupSwagger(app);
   // app.enableCors();
-  await app.listen(process.env.PORT ?? 8084);
+  await app.listen(configService.get<number>("APP_PORT") || 8084);
 }
 
 bootstrap();

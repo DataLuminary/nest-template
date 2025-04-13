@@ -1,22 +1,9 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from "@nestjs/common";
+import { Controller, Get, Body, Patch, Param, Delete } from "@nestjs/common";
 import { UsersService } from "./users.service";
 
 @Controller("users")
-export class AuthController {
+export class UserController {
   constructor(private readonly service: UsersService) {}
-
-  @Post()
-  create(@Body() createUserDto) {
-    console.log(createUserDto);
-  }
 
   @Get()
   findAll() {

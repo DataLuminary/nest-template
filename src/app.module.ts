@@ -1,6 +1,8 @@
 import { getDatabaseConfig } from "@/config/database.config";
+import { JwtAuthGuard } from "@modules/auth/guards/jwt-auth-guard.service";
 import { SpaceModule } from "@modules/space/space.module";
-import { AuthModule } from "@modules/users/auth.module";
+import { UserModule } from "@modules/users/user.module";
+import { AuthModule } from "@modules/auth/auth.module";
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import * as Joi from "joi";
@@ -12,6 +14,7 @@ import {
   QueryResolver,
 } from "nestjs-i18n";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { APP_GUARD } from "@nestjs/core";
 
 @Module({
   imports: [
@@ -70,9 +73,10 @@ import { TypeOrmModule } from "@nestjs/typeorm";
       },*/
     }),
     AuthModule,
-    AuthModule,
+    UserModule,
+    UserModule,
     SpaceModule,
   ],
-  providers: [],
+  providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule {}

@@ -1,8 +1,8 @@
-import type { UserEntity } from "@modules/users/entities/user.entity";
-
-export enum UserStatus {
-  Active = "active",
-  Inactive = "inactive",
-  Banned = "banned",
+// 定义明确的 payload 类型接口
+export interface JwtPayload {
+  sub: number;
+  uid: string;
+  name: string;
+  iat?: number;
+  exp?: number;
 }
-export type UserWithoutSensitiveInfo = Omit<UserEntity, "slat" | "password">;
